@@ -11,7 +11,22 @@ BitzDocは、BitzLabsエコシステムの中核をなすライブラリです�
     1.  **Markdownパーサー**: Markdownテキストを`DocAST`に変換します。コードブロックの言語情報に基づいて適切な専門パーサーを呼び出し、リッチコンテンツを自動的にパースして埋め込みます。
     2.  **専用API (Builder API)**: C#やTypeScriptのコードから、`DocAST`をプログラム的に構築できます。動的なレポート生成などに利用できます。
 -   **HTMLコンパイラ (第1目標)**: `DocAST`を受け取り、HTML文字列を生成します。埋め込まれた専門ASTは、対応するライブラリのレイアウトエンジンとレンダラーを呼び出してSVGなどに変換し、HTML内に埋め込みます。
--   **(将来的に) レイアウトエンジン (第2目標)**: `DocAST`と`CompositionAST`を元に、高品質な固定レイアウト出力のための`LayoutAST`を生成します。
+-   **(第2目標) レイアウトエンジン**: `DocAST`と`CompositionAST`を元に、高品質な固定レイアウト出力のための`LayoutAST`を生成します。
+
+## ✅ 初期開発ToDoリスト
+
+1.  **`DocAST`の型定義**:
+    *   `IDocNode`インターフェース(`IAstNode`継承)を定義。
+    *   `ParagraphNode`, `HeadingNode`, `EmbeddedBlockNode`など、主要なASTノードクラスの「殻」を作成。
+2.  **Markdownパーサーの骨格**:
+    *   `MarkdownParser`クラスを作成。既存のMarkdownライブラリ(例: Markdig)のラッパーとして実装。
+    *   ` ```plot `のようなコードブロックを検知し、対応する専門パーサーを呼び出すための拡張ポイント（フック）を実装。
+3.  **専用API (ビルダー) の設計**:
+    *   `DocumentBuilder`クラスを設計。`.AddHeading("Title")`, `.AddParagraph("...")`のような基本的なメソッドを定義。
+4.  **HTMLコンパイラのインターフェース**:
+    *   `HtmlCompiler`クラスを作成し、`Compile(IDocNode node)`メソッドを定義。
+    *   初期実装として、`HeadingNode`を`<h1>`に、`ParagraphNode`を`<p>`に変換するロジックを実装。
+    *   `EmbeddedBlockNode`を処理するロジックの骨格を実装。内部で専門エンジンを呼び出し、レンダラー(例: `BitzRenderers.SvgRenderer`)でSVG文字列を取得し、HTMLに埋め込む流れを構築。
 
 ## このライブラリの位置づけ
 
@@ -19,9 +34,7 @@ BitzDocは、BitzLabsエコシステムの中核をなすライブラリです�
 
 ### 依存関係
 
--   `BitzAstCore`
--   `BitzParser`
--   `BitzLayout`
+-   `BitzAstCore`, `BitzParser`, `BitzLayout`
 -   (動的に解決) `BitzMath`, `BitzPlot`, `BitzGraph`, `BitzFlow`, `BitzUi` など
 
 ---
